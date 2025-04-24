@@ -5,7 +5,7 @@ from matplotlib.figure import Figure
 class ReportChartDialog(QDialog):
     def __init__(self, data, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Графік доходу по днях")
+        self.setWindowTitle("Графік виторгу по днях")
         self.resize(800, 500)
 
         self.data = data  # Перевірка формату даних
@@ -38,7 +38,7 @@ class ReportChartDialog(QDialog):
         elif self.chart_type == 'bar':
             ax.bar(dates, revenues, color='green')
 
-        ax.set_title("Дохід по днях")
+        ax.set_title("Виторг по днях")
         ax.set_xlabel("Дата")
         ax.set_ylabel("Сума (грн)")
         ax.tick_params(axis='x', rotation=45)
