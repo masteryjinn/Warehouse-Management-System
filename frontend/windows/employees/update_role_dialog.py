@@ -52,8 +52,16 @@ class UpdateRoleDialog(QDialog):
         """)
         self.setLayout(QVBoxLayout())
 
+        # Словник для перетворення ролей з української на англійську
+        self.role_dict = {
+            "Адміністратор": "admin",
+            "Менеджер": "manager",
+            "Працівник": "employee"
+        }
+
+        # Створюємо комбо-бокс для ролей українською
         self.role_combo = QComboBox()
-        self.role_combo.addItems(["admin", "manager", "employee"])  # або з сервера
+        self.role_combo.addItems(["Адміністратор", "Менеджер", "Працівник"])  # українською
         self.layout().addWidget(QLabel("Оберіть нову роль:"))
         self.layout().addWidget(self.role_combo)
 
@@ -64,9 +72,12 @@ class UpdateRoleDialog(QDialog):
 
     def update_role(self):
         """Оновлює роль співробітника"""
-        if not self.role_combo.currentText():
+        selected_role_ukr = self.role_combo.currentText()
+
+        if not selected_role_ukr:
             QMessageBox.warning(self, "Помилка", "Будь ласка, виберіть роль")
             return
+
         current_user = CurrentUser()
         if current_user.role != "admin":
             QMessageBox.warning(self, "Помилка", "У вас немає прав для зміни ролі")
@@ -75,7 +86,12 @@ class UpdateRoleDialog(QDialog):
         if not token:
             QMessageBox.warning(self, "Помилка", "Вам потрібно заново увійти в систему")
             return
-        new_role = self.role_combo.currentText()
+
+        # Перетворюємо українську роль на англійську
+        new_role = self.role_dict.get(selected_role_ukr)
+        if not new_role:
+            QMessageBox.warning(self, "Помилка", "Невідома роль")
+            return
         response = requests.post(
             "http://localhost:8000/employees/update_role",
             json={"employee_id": self.employee_id, "new_role": new_role},
